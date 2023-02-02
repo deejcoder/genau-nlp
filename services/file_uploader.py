@@ -4,6 +4,7 @@ from uuid import uuid4
 import aiofiles
 
 from fastapi import UploadFile
+from database.models import TranscribeResult
 
 
 class FileUploader:
@@ -28,6 +29,8 @@ class FileUploader:
             # asynchronously read and save the file
             async with aiofiles.open(str(file_path), mode='wb') as buffer:
                 await buffer.write(await file.read())
+
+            TranscribeResult.execute_query()
 
             return file_path
 
