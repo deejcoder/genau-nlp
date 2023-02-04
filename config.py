@@ -1,3 +1,5 @@
+# TODO: use a proper config file ...
+
 DB_PARAMS = {
     'host': 'localhost',
     'port': '5432',

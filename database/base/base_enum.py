@@ -1,6 +1,6 @@
 from tortoise import fields, models
 from collections import namedtuple
-from typing import Optional, Dict, Type
+from typing import Type
 import enum
 
 

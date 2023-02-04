@@ -1,7 +1,5 @@
-import enum
-from tortoise import fields
-
-from database.models.base_enum import BaseEnumModel, DatabaseEnum, DatabaseEnumItem
+from database.base import BaseEnumModel, DatabaseEnum, DatabaseEnumItem
+from events import event, EventType
 
 
 class JobType(BaseEnumModel):
@@ -12,7 +10,7 @@ class JobType(BaseEnumModel):
     class Meta:
         table = "job_type"
 
-    @classmethod
-    async def on_post_generate(cls):
-        await super().insert_enum_values(cls.Index)
 
+@event.on(EventType.Index.post_schema_generation)
+async def __on_post_generate():
+    await JobType.insert_enum_values(JobType.Index)

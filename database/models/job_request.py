@@ -1,5 +1,5 @@
 from tortoise import fields
-from database.models import BaseModel
+from database.base import BaseModel
 
 
 class JobRequest(BaseModel):

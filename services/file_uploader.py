@@ -4,7 +4,6 @@ from uuid import uuid4
 import aiofiles
 
 from fastapi import UploadFile
-from database.models import job_request
 
 
 class FileUploader:

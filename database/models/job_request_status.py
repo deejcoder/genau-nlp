@@ -1,5 +1,5 @@
-import enum
-from database.models.base_enum import BaseEnumModel, DatabaseEnum, DatabaseEnumItem
+from database.base import BaseEnumModel, DatabaseEnum, DatabaseEnumItem
+from events.event import event, EventType
 
 
 class JobRequestStatus(BaseEnumModel):
@@ -12,9 +12,7 @@ class JobRequestStatus(BaseEnumModel):
     class Meta:
         table = "job_request_status"
 
-    @classmethod
-    async def on_post_generate(cls):
-        await super().insert_enum_values(cls.Index)
-        # values = [(s.value, s.name) for s in cls.Index]
-        # for value in values:
-        #     await cls.get_or_create(id=value[0], code=value[1])
+
+@event.on(EventType.Index.post_schema_generation)
+async def __on_post_generate():
+    await JobRequestStatus.insert_enum_values(JobRequestStatus.Index)
