@@ -22,12 +22,12 @@ class TranscribeResponse(BaseModel):
     text: str
 
 
-@router.post("/upload", response_model=TranscribeResponse, tags=router.tags)
-async def upload_file(file: UploadFile, language: Optional[str] = None):
+@router.post("/upload", response_model=TranscribeResponse)
+async def upload_file(file: UploadFile, language: Optional[str] = None) -> TranscribeResponse:
     manager = FileUploader()
     file_path = await manager.save_file(file, Path(config.UPLOAD_FILE_PATH))
 
     result = transcriber.transcribe_from_file(file_path, language)
 
-    return result
+    return TranscribeResponse(language=result.language, text=result.text)
 

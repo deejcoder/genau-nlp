@@ -2,6 +2,7 @@ import logging
 import traceback
 from fastapi import FastAPI, Request, APIRouter
 from fastapi.responses import JSONResponse
+from pydantic import BaseConfig
 from tortoise import Tortoise
 
 import config
@@ -11,6 +12,7 @@ import routes.transcribe
 
 
 web_app = FastAPI()
+BaseConfig.arbitrary_types_allowed = True
 
 # add routers here
 router = APIRouter()
