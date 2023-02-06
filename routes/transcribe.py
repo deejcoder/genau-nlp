@@ -1,32 +1,33 @@
 from pathlib import Path
 
 from fastapi import UploadFile, APIRouter
+from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 from typing import Optional
 
 import config
 from services import FileUploader
-from services.transcriber import transcriber
+from services.transcriber import transcriber, TranscribeResult
 
 
 router = APIRouter(
     prefix="/transcribe",
     tags=["transcribe"],
-    responses={404: {"description": "Not Found"}}
+    responses={404: {"description": "Not Found"}},
 )
 
 
-@router.post("/upload")
+class TranscribeResponse(BaseModel):
+    language: str
+    text: str
+
+
+@router.post("/upload", response_model=TranscribeResponse, tags=router.tags)
 async def upload_file(file: UploadFile, language: Optional[str] = None):
     manager = FileUploader()
     file_path = await manager.save_file(file, Path(config.UPLOAD_FILE_PATH))
 
     result = transcriber.transcribe_from_file(file_path, language)
 
-    return JSONResponse(
-        status_code=200,
-        content={
-            "language": result.language,
-            "text": result.text
-        }
-    )
+    return result
+
