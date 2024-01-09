@@ -9,6 +9,7 @@ import config
 from events import event, EventType
 import database.models
 import routes.transcribe
+import routes.nlp
 
 
 web_app = FastAPI()
@@ -17,6 +18,7 @@ BaseConfig.arbitrary_types_allowed = True
 # add routers here
 router = APIRouter()
 router.include_router(routes.transcribe.router)
+router.include_router(routes.nlp.router)
 
 
 # include all routers in the web_app

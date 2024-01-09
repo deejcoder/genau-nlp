@@ -1,6 +1,6 @@
 from tortoise import fields, models
 from collections import namedtuple
-from typing import Type
+from typing import Type, Optional
 import enum
 
 
@@ -23,3 +23,10 @@ class BaseEnumModel(models.Model):
     async def insert_enum_values(cls, db_enum: Type[DatabaseEnum]):
         for db_enum_item in db_enum:
             await cls.get_or_create(id=db_enum_item.value, code=db_enum_item.code, description=db_enum_item.description)
+
+    @classmethod
+    def get_value_from_code(cls, code: str, db_enum: Type[DatabaseEnum]):
+        for db_enum_item in db_enum:
+            if db_enum_item.code is code:
+                return db_enum_item.value
+        return None
