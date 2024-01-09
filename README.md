@@ -1,7 +1,5 @@
-# transcribe-api
+# genau-nlp
 
-A simple service that provides translation and transcribe functionality.
+A micro service that provides isolated and single-purpose NLP functions to the Genau! app
 
-Written using FastAPI, Tortoise-ORM, openai-whisper.
-
-Mobile application is available that communicates with this API. See [transcribe-mobile](https://github.com/deejcoder/transcribe-mobile).
+Written using FastAPI, Tortoise-ORM, openai-whisper, spaCy.
