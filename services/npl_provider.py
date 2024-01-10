@@ -5,9 +5,11 @@ from typing import List
 
 
 class TokenizeResult:
-    def __init__(self, text: str, pos: str):
+    def __init__(self, text: str, pos: str, morph: dict, order: int):
         self.text = text
         self.pos = pos
+        self.morph = morph
+        self.order = order
 
 
 class NplProvider:
@@ -34,8 +36,12 @@ class NplProvider:
     def tokenize(self, sentence: str) -> List[TokenizeResult]:
         doc = self.provider(sentence)
 
-        return [TokenizeResult(token.text, token.pos_) for token in doc]
+        result: list[TokenizeResult] = []
 
+        for idx, token in enumerate(doc):
+            morph = token.morph.to_dict()
+            result.append(TokenizeResult(token.text, token.pos_, morph, idx))
+        return result
 
 
 

@@ -17,6 +17,8 @@ router = APIRouter(
 class Token(BaseModel):
     text: str
     pos: str
+    morph: dict[str, str]
+    order: int
 
 
 class TokenizeResponse(BaseModel):
@@ -37,7 +39,7 @@ async def generate_tags(sentence: str, language: Optional[str] = None) -> Tokeni
         case _:
             raise LanguageNotSupported(language)
 
-    tokens = [Token(text=item.text, pos=item.pos) for item in npl_provider.tokenize(sentence)]
+    tokens = [Token(text=item.text, pos=item.pos, morph=item.morph, order=item.order) for item in npl_provider.tokenize(sentence)]
 
     return TokenizeResponse(tokens=tokens)
 
