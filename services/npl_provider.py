@@ -11,6 +11,11 @@ class TokenizeResult:
         self.morph = morph
         self.order = order
 
+class SimilarityResult:
+    def __init__(self, word: str, other: str, result: float):
+        self.word = word
+        self.other = other
+        self.result = result
 
 class NplProvider:
     def __init__(self, language: SupportedLanguage.Index):
@@ -42,6 +47,20 @@ class NplProvider:
             morph = token.morph.to_dict()
             result.append(TokenizeResult(token.text, token.pos_, morph, idx))
         return result
+
+    def calculate_word_similarities(self, word: str, others: list[str]) -> list[SimilarityResult]:
+        doc_word = self.provider(word)
+
+        result: list[SimilarityResult] = []
+
+        for other in others:
+            doc_other = self.provider(other)
+
+            result.append(SimilarityResult(word, other, doc_word.similarity(doc_other)))
+
+        return result
+
+
 
 
 
