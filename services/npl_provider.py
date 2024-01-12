@@ -17,6 +17,10 @@ class SimilarityResult:
         self.other = other
         self.result = result
 
+
+doc = spacy.load("de_core_news_lg")
+
+
 class NplProvider:
     def __init__(self, language: SupportedLanguage.Index):
         self.language = language
@@ -29,14 +33,7 @@ class NplProvider:
 
     @staticmethod
     def load_de_pipeline() -> spacy.Language:
-        pipeline_name = 'de_core_news_sm'
-
-        try:
-            spacy.load("de_core_news_sm")
-            import de_core_news_sm
-            return de_core_news_sm.load()
-        except IOError:
-            raise PipelineDoesNotExist(pipeline_name)
+        return doc
 
     def tokenize(self, sentence: str) -> List[TokenizeResult]:
         doc = self.provider(sentence)
