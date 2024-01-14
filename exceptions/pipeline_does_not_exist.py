@@ -1,4 +1,4 @@
 class PipelineDoesNotExist(Exception):
-    def __init__(self, pipeline_name: str):
-        self.pipeline_name = pipeline_name
-        super().__init__(f'Pipeline does not exist with name {self.pipeline_name}')
+    def __init__(self, lang: str):
+        self.language = lang
+        super().__init__(f"No pipeline exists for language '{lang}'")

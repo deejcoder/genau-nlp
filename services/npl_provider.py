@@ -2,8 +2,10 @@ import spacy
 from database.models import SupportedLanguage
 from exceptions import PipelineDoesNotExist
 from typing import List
+from deprecated import deprecated
 
 
+@deprecated
 class TokenizeResult:
     def __init__(self, text: str, pos: str, morph: dict, order: int):
         self.text = text
@@ -11,6 +13,8 @@ class TokenizeResult:
         self.morph = morph
         self.order = order
 
+
+@deprecated
 class SimilarityResult:
     def __init__(self, word: str, other: str, result: float):
         self.word = word
@@ -21,6 +25,7 @@ class SimilarityResult:
 doc = spacy.load("de_core_news_lg")
 
 
+@deprecated
 class NplProvider:
     def __init__(self, language: SupportedLanguage.Index):
         self.language = language
