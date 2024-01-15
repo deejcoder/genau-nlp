@@ -1,6 +1,7 @@
 import inspect
 import types
 import random
+import typing
 from functools import wraps
 
 from spacy.tokens import Token
@@ -41,7 +42,7 @@ def exercise_generator(exercise_type: ExerciseGeneratorType.Index, sentence_patt
 
             if 'return' in hints:
                 return_type_hint = hints['return']
-                if not issubclass(return_type_hint, Exercise):
+                if not issubclass(return_type_hint, typing.Optional[Exercise]):
                     raise ValueError(
                         f"The generator '{func.__name__}' must return a model that inherits from '{Exercise.__name__}'")
 
@@ -167,5 +168,7 @@ def generate_exercises(exercise_type: ExerciseGeneratorType.Index,
 
     result = []
     for generator in generators:
-        result.append(generator[0](sentence, generator[-1]))
+        ex = generator[0](sentence, generator[-1])
+        if ex is not None:
+            result.append(ex)
     return result

@@ -13,7 +13,7 @@ pattern = "DET ADJ NOUN"
 
 
 @exercise_generator(ExerciseGeneratorType.Index.MultiChoice, pattern)
-def generate(sentence: str, matching_tokens: List[Token]) -> MultiChoiceExercise:
+def generate(sentence: str, matching_tokens: List[Token]) -> Optional[MultiChoiceExercise]:
     # given the pattern matches there will always be an adjective
     adj_token = find_adjective(matching_tokens)
     rand_adj_declensions = get_random_adj_declensions(adj_token)
