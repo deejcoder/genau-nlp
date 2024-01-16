@@ -1,18 +1,23 @@
-from exercises import exercise_generator, ExerciseGeneratorType, MultiChoiceExercise
+from ..models import MultiChoiceExercise
+from ..generation import exercise_generator, ExerciseGeneratorType
 from typing import List, Optional
-from spacy.tokens import Token
+from spacy.tokens import Token, Span
 from pattern.text.de import article, DEFINITE, INDEFINITE, FEMALE, MALE, NEUTER, \
     ACCUSATIVE, DATIVE, NOMINATIVE
 import random
 
 
-pattern = "DET NOUN"
+g_id = "8187c404-e6fa-46f1-833c-d13ecda83b00"
+pattern = [
+    {'POS': 'DET'},
+    {'POS': 'NOUN'}
+]
 
 
-@exercise_generator(ExerciseGeneratorType.Index.MultiChoice, pattern)
-def generate(sentence: str, matching_tokens: List[Token]) -> Optional[MultiChoiceExercise]:
-    det = find_by_token_pos(matching_tokens, "DET")
-    noun = find_by_token_pos(matching_tokens, "NOUN")
+@exercise_generator(g_id, "Genders of nouns", ExerciseGeneratorType.Index.MultiChoice, pattern)
+def generate(sentence: str, match: Span) -> Optional[MultiChoiceExercise]:
+    det = find_by_token_pos(match, "DET")
+    noun = find_by_token_pos(match, "NOUN")
 
     valid_cases = [
         NOMINATIVE,
@@ -50,14 +55,14 @@ def generate(sentence: str, matching_tokens: List[Token]) -> Optional[MultiChoic
     distractors = []
 
     for rand_article in rand_articles:
-        values = [token.text for token in matching_tokens]
+        values = [token.text for token in match]
         det_idx = values.index(det.text)
         values[det_idx] = rand_article
 
         distractor = " ".join(values)
         distractors.append(distractor)
 
-    answer = " ".join([token.text for token in matching_tokens])
+    answer = " ".join([token.text for token in match])
 
     return MultiChoiceExercise(
         sentence=sentence,
@@ -66,10 +71,10 @@ def generate(sentence: str, matching_tokens: List[Token]) -> Optional[MultiChoic
     )
 
 
-def find_by_token_pos(tokens: List[Token], pos: str) -> Optional[Token]:
-    for i in range(len(tokens)):
-        if tokens[i].pos_ == pos:
-            return tokens[i]
+def find_by_token_pos(span: Span, pos: str) -> Optional[Token]:
+    for i in range(len(span)):
+        if span[i].pos_ == pos:
+            return span[i]
     return None
 
 

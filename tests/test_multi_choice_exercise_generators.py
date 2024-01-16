@@ -1,11 +1,12 @@
 import exercises.generators
 from exercises import MultiChoiceExercise
 from database.models import ExerciseGeneratorType
+from exercises import generate
 
 exercise_type = ExerciseGeneratorType.Index.MultiChoice
 module = exercises.generators
 
-by_pattern = exercises.get_exercise_generators_by_pattern(exercise_type, module, "Das ist ein großer Hund.")
+by_pattern = generate.get_exercise_generators_by_pattern(exercise_type, module, "Das ist ein großer Hund.")
 # for this type of sentence, expect only the adjective declension generator
 assert(len(by_pattern) == 1)
 
@@ -24,7 +25,7 @@ german_sentences = [
 
 generated_exercises = []
 for sentence in german_sentences:
-    generated = exercises.generate_exercises(exercise_type, module, sentence)
+    generated = generate.generate_exercises(exercise_type, module, sentence, [])
 
     # we should have at least one exercise, but there could be more
     assert(len(generated) > 0)
