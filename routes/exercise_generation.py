@@ -17,6 +17,10 @@ class MultiChoiceResponse(BaseModel):
     distractors: list[str]
 
 
+class ExerciseList(BaseModel):
+    multi_choice: list[MultiChoiceResponse]
+
+
 class ExerciseGenerator(BaseModel):
     id: str
     description: str
@@ -37,8 +41,8 @@ def get_generator_list():
         exercise_type=g.exercise_type.code) for g in generators]
 
 
-@router.post("/multi_choice", response_model=list[MultiChoiceResponse])
-def generate_multi_choice_exercises(sentence: str, filters: GenerationFilters):
+@router.post("/generate", response_model=ExerciseList)
+def generate_exercises(sentence: str, filters: GenerationFilters):
     exercise_type = ExerciseGeneratorType.Index.MultiChoice
     result = generate.generate_exercises(exercise_type, exercises.generators, sentence, filters.generator_ids)
 
@@ -49,4 +53,4 @@ def generate_multi_choice_exercises(sentence: str, filters: GenerationFilters):
 
         response.append(MultiChoiceResponse(sentence=ex.sentence, answer=ex.answer, distractors=ex.distractors))
 
-    return response
+    return ExerciseList(multi_choice=response)
