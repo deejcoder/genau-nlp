@@ -1,10 +1,13 @@
 from ..models import MultiChoiceExercise
 from ..generation import exercise_generator, ExerciseGeneratorType
-from typing import List, Optional
+from typing import Optional
 from spacy.tokens import Token, Span
 from pattern.text.de import article, DEFINITE, INDEFINITE, FEMALE, MALE, NEUTER, \
     ACCUSATIVE, DATIVE, NOMINATIVE
 import random
+from exercises.models.internal import SentenceParts
+from exercises.utils import compose_multi_choice_exercise
+from services.nlp import NlpBlob
 
 
 g_id = "8187c404-e6fa-46f1-833c-d13ecda83b00"
@@ -15,7 +18,8 @@ pattern = [
 
 
 @exercise_generator(g_id, "Genders of nouns", ExerciseGeneratorType.Index.MultiChoice, pattern)
-def generate(sentence: str, match: Span) -> Optional[MultiChoiceExercise]:
+def generate(sentence: str, sentence_parts: SentenceParts) -> Optional[MultiChoiceExercise]:
+    match = sentence_parts.match
     det = find_by_token_pos(match, "DET")
     noun = find_by_token_pos(match, "NOUN")
 
@@ -27,8 +31,6 @@ def generate(sentence: str, match: Span) -> Optional[MultiChoiceExercise]:
 
     morph = noun.morph.to_dict()
 
-    # todo: make sure this handles case:
-    #  'Der schöne Wald hat hohe Bäume und viele Tiere, während der Fluss ruhig durch die grüne Landschaft fließt.'
     if morph['Number'] == "Plur":
         return None
 
@@ -52,23 +54,16 @@ def generate(sentence: str, match: Span) -> Optional[MultiChoiceExercise]:
 
     rand_articles = random.sample(set(possible_articles), 3)
 
-    distractors = []
+    choices = []
 
     for rand_article in rand_articles:
-        values = [token.text for token in match]
-        det_idx = values.index(det.text)
-        values[det_idx] = rand_article
+        choice_tokens = [token for token in match]
+        det_idx = choice_tokens.index(det)
+        choice_tokens[det_idx] = NlpBlob(rand_article, "de").doc[0]
 
-        distractor = " ".join(values)
-        distractors.append(distractor)
+        choices.append(choice_tokens)
 
-    answer = " ".join([token.text for token in match])
-
-    return MultiChoiceExercise(
-        sentence=sentence,
-        answer=answer,
-        distractors=distractors
-    )
+    return compose_multi_choice_exercise(sentence_parts=sentence_parts, choices=choices)
 
 
 def find_by_token_pos(span: Span, pos: str) -> Optional[Token]:

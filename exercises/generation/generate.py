@@ -3,7 +3,6 @@ from typing import List
 from database.models import ExerciseGeneratorType
 from ..models import Exercise
 from . import get_exercise_generators_by_pattern
-from . import get_exercise_generators
 
 
 def generate_exercises(exercise_type: ExerciseGeneratorType.Index,
@@ -32,8 +31,8 @@ def generate_exercises(exercise_type: ExerciseGeneratorType.Index,
 
     result = []
     for matching_generator in matching_generators:
-        for match in matching_generator.matches:
-            generated_exercise = matching_generator.generator(sentence, match)
+        for sentence_parts in matching_generator.sentences:
+            generated_exercise = matching_generator.generator(sentence, sentence_parts)
 
             if generated_exercise is not None:
                 result.append(generated_exercise)

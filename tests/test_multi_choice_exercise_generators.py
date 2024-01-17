@@ -32,5 +32,5 @@ for sentence in german_sentences:
 
     for ex in generated:
         assert(isinstance(ex, MultiChoiceExercise))
-        print(ex.format_for_logging())
+        #print(ex.)
 
