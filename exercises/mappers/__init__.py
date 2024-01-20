@@ -1,0 +1,1 @@
+from .multi_choice_exercise_mapper import map_from_internal as map_to_multi_choice_exercise

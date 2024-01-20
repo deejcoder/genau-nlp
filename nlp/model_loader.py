@@ -1,3 +1,5 @@
+import logging
+
 import spacy
 from database.models import SupportedLanguage
 from exceptions import PipelineDoesNotExist

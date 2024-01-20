@@ -3,12 +3,12 @@ from typing import Optional
 
 from spacy.tokens import Token, Span
 
-from ..generation import exercise_generator
+from exercises.generation import exercise_generator
 from exercises.models.public import MultiChoiceExercise
 from database.models import ExerciseGeneratorType
-from services import NlpBlob
-from ..models.internal import SentenceParts
-from exercises.utils import compose_multi_choice_exercise
+from exercises.models.internal import SentenceParts
+from exercises.mappers import map_to_multi_choice_exercise
+from nlp import NlpToolkit
 
 
 g_id = "03d773f4-2372-4e5e-ac10-d927c685bef6"
@@ -31,13 +31,10 @@ def generate(sentence: str, sentence_parts: SentenceParts) -> Optional[MultiChoi
 
     # substitute the answer with each invalid declension to build a list of choices
     for adj_declension in rand_adj_declensions:
-        choice_tokens = [token for token in match]
-        adj_idx = choice_tokens.index(adj_token)
-        choice_tokens[adj_idx] = adj_declension
-
+        choice_tokens = NlpToolkit.replace_token_in_span(match, adj_token, adj_declension)
         choices.append(choice_tokens)
 
-    return compose_multi_choice_exercise(sentence_parts, choices)
+    return map_to_multi_choice_exercise(sentence_parts, choices)
 
 
 def find_adjective(match: Span) -> Optional[Token]:
@@ -59,8 +56,13 @@ def get_random_adj_declensions(adj_token: Token) -> list[Token]:
     ]
 
     valid_declensions = []
+    nlp = NlpToolkit.load_model("de")
     for declension in declensions:
-        token = NlpBlob(declension, "de").doc[0]
+
+        if len(adj_token.whitespace_) != 0:
+            declension += " "
+
+        token = nlp(declension)[0]
         if not token.is_oov:
 
             # do not include the original adjective

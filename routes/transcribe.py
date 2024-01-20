@@ -2,13 +2,11 @@ from pathlib import Path
 
 from fastapi import UploadFile, APIRouter
 from pydantic import BaseModel
-from fastapi.responses import JSONResponse
 from typing import Optional
 
 import config
-from services import FileUploader
-from services.transcriber import transcriber, TranscribeResult
-
+from transcribe import FileUploader
+from transcribe import transcriber
 
 router = APIRouter(
     prefix="/transcribe",

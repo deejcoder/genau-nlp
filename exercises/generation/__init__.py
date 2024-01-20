@@ -8,13 +8,13 @@ import typing
 from spacy.matcher import Matcher
 from spacy.tokens import Span
 
-from database.models import ExerciseGeneratorType, SupportedLanguage
+from database.models import ExerciseGeneratorType
 from exceptions import MissingGeneratorArgument
 from exercises.models.internal import SentenceParts
-from services import NlpBlob
-from services.nlp import ModelLoader
 from exercises.models.internal import MatchingGenerator, Generator
 from exercises.models.public import Exercise
+from nlp import NlpToolkit
+
 
 cached_generators: List[Generator] = []
 
@@ -124,24 +124,24 @@ def compare_generator_pattern(sentence: str, pattern: list[dict[str, typing.Any]
     :param pattern:
     :return: a list of sentence parts (start|match|end)
     """
-    sentence_blob = NlpBlob(sentence, "de")
+    nlp = NlpToolkit.load_model("de")
+    doc = nlp(sentence)
 
-    model = ModelLoader.load(SupportedLanguage.Index.Deutsch)
-    matcher = Matcher(model.vocab)
+    matcher = Matcher(nlp.vocab)
     matcher.add("pattern", [pattern])
-    matches = matcher(sentence_blob.doc)
+    matches = matcher(doc)
 
     result = []
     for match_id, start, end in matches:
         start_span = None
         if start != 0:
-            start_span = Span(sentence_blob.doc, 0, start)
+            start_span = Span(doc, 0, start)
 
-        match_span = Span(sentence_blob.doc, start, end)
+        match_span = Span(doc, start, end)
 
         end_span = None
-        if len(sentence_blob.doc) > end:
-            end_span = Span(sentence_blob.doc, end, len(sentence_blob.doc))
+        if len(doc) > end:
+            end_span = Span(doc, end, len(doc))
 
         result.append(SentenceParts(start_span, match_span, end_span))
 

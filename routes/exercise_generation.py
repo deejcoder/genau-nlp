@@ -19,7 +19,7 @@ def get_generator_list():
     return [ExerciseGenerator(
         id=g.g_id,
         description=g.description,
-        exercise_type=g.exercise_type.code) for g in generators]
+        exerciseType=str(g.exercise_type.code)) for g in generators]
 
 
 @router.post("/multi-choice", response_model=list[MultiChoiceExercise])
