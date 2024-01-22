@@ -43,5 +43,6 @@ def map_from_internal(sentence_parts: SentenceParts, choices: list[list[Token]])
 def token_to_frag(token: Token):
     return FragmentToken(
         text=token.text,
-        isPunct=token.is_punct
+        isPunct=token.is_punct,
+        trailingWhitespace=token.whitespace_
     )
