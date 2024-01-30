@@ -11,7 +11,14 @@ def map_from_internal(sentence_parts: SentenceParts, choices: list[list[Token]])
         start = MultiChoiceFragment(tokens=[token_to_frag(token) for token in sentence_parts.start])
         start.text = sentence_parts.start.text
 
-    options = []
+    # add the match as a valid option - but flag it as being 'correct'
+    # need to be a bit smarter here and match casing of other options
+    # e.g. if the article is the first word in the sentence
+    options = [MultiChoiceOption(
+        text=sentence_parts.match.text,
+        tokens=[token_to_frag(token) for token in sentence_parts.match],
+        correct=True)]
+
     for choice in choices:
         choice_text = NlpToolkit.detokenize(choice)
         fragment_tokens = [token_to_frag(token) for token in choice]
